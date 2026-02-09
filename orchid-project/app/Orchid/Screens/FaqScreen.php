@@ -3,6 +3,8 @@
 namespace App\Orchid\Screens;
 
 use App\Models\Faq;
+use App\Models\SeoData;
+use App\Orchid\Layouts\SeoLayout;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Input;
@@ -23,7 +25,8 @@ class FaqScreen extends Screen
     {
         $faq = Faq::firstOrNew([]);
         return [
-            'faq' => $faq
+            'faq' => $faq,
+            'seo' => $faq ? $faq->getSeoData() : null
         ];
     }
 
@@ -72,7 +75,8 @@ class FaqScreen extends Screen
                     'title' => Input::make(),
                     'description' => TextArea::make()->rows(3)
                 ])
-            ])
+            ])->title('Main iformation'),
+            'SEO' => new SeoLayout(),
         ];
     }
 
@@ -83,7 +87,17 @@ class FaqScreen extends Screen
 
         $faq = Faq::firstOrCreate([]);
         $faq->fill($request->get('faq'))->save();
+        //Seo
 
+        if ($faq->seo) {
+            $faq->seo->update($request->input('seo', []));
+        } else {
+            $seoData = array_merge(
+                ['page_type' => Faq::class, 'page_id' => $faq->id],
+                $request->input('seo', [])
+            );
+            SeoData::create($seoData);
+        }
         Toast::success('Faq succesfuly save!');
         return redirect()->route('platform.faq');
 

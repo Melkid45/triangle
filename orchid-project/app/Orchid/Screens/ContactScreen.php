@@ -3,6 +3,8 @@
 namespace App\Orchid\Screens;
 
 use App\Models\Contact;
+use App\Models\SeoData;
+use App\Orchid\Layouts\SeoLayout;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Input;
@@ -22,7 +24,8 @@ class ContactScreen extends Screen
     {
         $contact = Contact::firstOrNew([]);
         return [
-            'contact' => $contact
+            'contact' => $contact,
+            'seo' => $contact ? $contact->getSeoData() : null
         ];
     }
 
@@ -96,6 +99,7 @@ class ContactScreen extends Screen
                     ->title('Copyright')
                     ->placeholder('copyright'),
             ])->title('Footer contact'),
+            'SEO' => new SeoLayout()
         ];
     }
     function save(Request $request)
@@ -115,7 +119,17 @@ class ContactScreen extends Screen
         $contact = Contact::firstOrNew([]);
         $contact->fill($request->get('contact'));
         $contact->save();
+        //Seo
 
+        if ($contact->seo) {
+            $contact->seo->update($request->input('seo', []));
+        } else {
+            $seoData = array_merge(
+                ['page_type' => Contact::class, 'page_id' => $contact->id],
+                $request->input('seo', [])
+            );
+            SeoData::create($seoData);
+        }
         Toast::success('Contact`s succesfuly save!');
         return redirect()->route('platform.contact');
     }

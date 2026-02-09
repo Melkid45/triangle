@@ -4,7 +4,9 @@ namespace App\Orchid\Screens;
 
 use App\Models\About;
 use App\Models\Partners;
+use App\Models\SeoData;
 use App\Models\Slogan;
+use App\Orchid\Layouts\SeoLayout;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Input;
@@ -30,7 +32,8 @@ class AboutScreen extends Screen
         return [
             'about' => $about,
             'partners' => $partners,
-            'slogan' => $slogan
+            'slogan' => $slogan,
+            'seo' => $about ? $about->getSeoData() : null
         ];
     }
 
@@ -93,7 +96,8 @@ class AboutScreen extends Screen
             Layout::rows([
                 Upload::make('partners.partner')
                 ->title('Partner Logo')
-            ])->title('Partners block')
+            ])->title('Partners block'),
+            'SEO' => new SeoLayout(),
         ];
     }
     function save(Request $request)
@@ -111,6 +115,17 @@ class AboutScreen extends Screen
         // Slogan
         $slogan = Slogan::firstOrCreate([]);
         $slogan->fill($request->get('slogan'))->save();
+        // Seo
+
+        if ($about->seo) {
+            $about->seo->update($request->input('seo', []));
+        } else {
+            $seoData = array_merge(
+                ['page_type' => About::class, 'page_id' => $about->id],
+                $request->input('seo', [])
+            );
+            SeoData::create($seoData);
+        }
         Toast::success('About page succesfuly save!');
         return redirect()->route('platform.about');
     }

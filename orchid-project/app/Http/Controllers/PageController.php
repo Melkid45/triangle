@@ -6,12 +6,15 @@ use App\Models\About;
 use App\Models\Career;
 use App\Models\CareerBLock;
 use App\Models\Categories;
+use App\Models\Contact;
 use App\Models\Facts;
 use App\Models\Faq;
 use App\Models\Hero;
+use App\Models\Partners;
 use App\Models\Preview;
 use App\Models\Slogan;
 use App\Models\Ways;
+use App\Models\WorkBLock;
 use App\Models\Works;
 use Illuminate\Http\Request;
 
@@ -23,18 +26,22 @@ class PageController extends Controller
         $ways = Ways::first();
         $preview = Preview::first();
         $facts = Facts::first();
-        return view('app.home', compact('hero', 'ways', 'preview', 'facts'));
+        $seoData = $hero ? $hero->getSeoData() : null;
+        return view('app.home', compact('hero', 'ways', 'preview', 'facts', 'seoData'));
     }
     function About(Request $request)
     {
         $about = About::first();
         $slogan = Slogan::first();
-        return view('app.about', compact('about', 'slogan'));
+        $partners = Partners::first();
+        $seoData = $about ? $about->getSeoData() : null;
+        return view('app.about', compact('about', 'slogan', 'seoData', 'partners'));
     }
     function Faq(Request $request)
     {
         $faq = Faq::first();
-        return view('app.faq', compact('faq'));
+        $seoData = $faq ? $faq->getSeoData() : null;
+        return view('app.faq', compact('faq', 'seoData'));
     }
     function Career(Request $request)
     {
@@ -44,7 +51,6 @@ class PageController extends Controller
             }
 
             try {
-                // Преобразуем строку в Carbon
                 $deadline = \Carbon\Carbon::parse($job->date);
                 return $deadline->isFuture() || $deadline->isToday();
             } catch (\Exception $e) {
@@ -53,7 +59,8 @@ class PageController extends Controller
         });
 
         $careerBlock = CareerBLock::first();
-        return view('app.career', compact('career', 'careerBlock'));
+        $seoData = $careerBlock ? $careerBlock->getSeoData() : null;
+        return view('app.career', compact('career', 'careerBlock', 'seoData'));
     }
     public function careerDetails($slug)
     {
@@ -63,8 +70,8 @@ class PageController extends Controller
         if (!$job) {
             abort(404);
         }
-
-        return view('app.career-details', compact('job'));
+        $seoData = $job ? $job->getSeoData() : null;
+        return view('app.career-details', compact('job', 'seoData'));
     }
     public function careerForm($slug)
     {
@@ -74,20 +81,25 @@ class PageController extends Controller
         if (!$job) {
             abort(404);
         }
-
-        return view('app.job-form', compact('job'));
+        $seoData = $job ? $job->getSeoData() : null;
+        return view('app.job-form', compact('job', 'seoData'));
     }
     public function Works(Request $request)
     {
         $works = Works::all();
-
+        $worksBlock = WorkBLock::first();
         $categories = Categories::all();
 
         $categoryMap = [];
         foreach ($categories as $category) {
             $categoryMap[$category->id] = $category->name;
         }
-
-        return view('app.works', compact('categories', 'works', 'categoryMap'));
+        $seoData = $worksBlock ? $worksBlock->getSeoData() : null;
+        return view('app.works', compact('categories', 'works', 'categoryMap', 'seoData'));
+    }
+    public function Contact(Request $request){
+        $contact = Contact::first();
+        $seoData = $contact ? $contact->getSeoData() : null;
+        return view('app.contact', compact('seoData'));
     }
 }

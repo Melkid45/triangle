@@ -64,7 +64,7 @@
                         <div class="tp-contact-address">
                             <h4>Phone number</h4>
                             @php
-                                $newPhone = str_replace(array('+',' ', '(', ')', '_', '-'), array('','','','','',''), $contact->phone);
+                            $newPhone = str_replace(array('+',' ', '(', ')', '_', '-'), array('','','','','',''), $contact->phone);
                             @endphp
                             <a
                                 href="tel:+{{$newPhone}}"
@@ -76,44 +76,56 @@
                 </div>
                 <div class="col-lg-7">
                     <div class="tp-contact-form-wrap ml-95 mb-30">
-                        <form
-                            id="contact-form"
-                            action="assets/mail-contact-us.php"
-                            method="POST">
+                        <form id="contact-form" action="{{ route('contact.send') }}" method="POST">
+                            @csrf
+
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="tp-contact-form-input mb-20">
                                         <label>Full name*</label>
-                                        <input name="name" type="text" />
+                                        <input name="name" type="text" required
+                                            placeholder="John Doe"
+                                            class="@error('name') error @enderror" />
+                                        <span class="error-message"></span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="tp-contact-form-input mb-20">
                                         <label>Email address*</label>
-                                        <input name="email" type="email" />
+                                        <input name="email" type="email" required
+                                            placeholder="john@example.com"
+                                            class="@error('email') error @enderror" />
+                                        <span class="error-message"></span>
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="tp-contact-form-input mb-20">
                                         <label>Website link</label>
-                                        <input name="website" type="text" />
+                                        <input name="website" type="url"
+                                            placeholder="https://example.com"
+                                            class="@error('website') error @enderror" />
+                                        <span class="error-message"></span>
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="tp-contact-form-input mb-20">
                                         <label>How Can We Help You*</label>
-                                        <textarea name="message"></textarea>
+                                        <textarea name="message" required
+                                            placeholder="Please describe how we can assist you..."
+                                            rows="6"
+                                            class="@error('message') error @enderror"></textarea>
+                                        <span class="error-message"></span>
                                     </div>
                                     <div class="tp-contact-form-btn">
-                                        <button
-                                            type="submit"
-                                            class="tp-btn tp-btn-xxl tp-btn-red d-inline-flex align-items-center w-100">
+                                        <button type="submit"
+                                            class="tp-btn tp-btn-xxl tp-btn-red d-inline-flex align-items-center w-100"
+                                            id="submit-btn">
                                             <span>
-                                                <span class="text-1">Contact Us</span>
-                                                <span class="text-2">Contact Us</span>
+                                                <span class="text-1">Send Message</span>
+                                                <span class="text-2">Send Message</span>
                                             </span>
                                         </button>
-                                        <p class="ajax-response mt-5"></p>
+                                        <p id="response" style="margin-top: 10px;" class="mt-5"></p>
                                     </div>
                                 </div>
                             </div>

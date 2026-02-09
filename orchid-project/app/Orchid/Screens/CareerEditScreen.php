@@ -3,6 +3,8 @@
 namespace App\Orchid\Screens;
 
 use App\Models\Career;
+use App\Models\SeoData;
+use App\Orchid\Layouts\SeoLayout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Orchid\Screen\Actions\Button;
@@ -28,7 +30,8 @@ class CareerEditScreen extends Screen
     {
         $this->career = $career;
         return [
-            'career' => $career
+            'career' => $career,
+            'seo' => $career ? $career->getSeoData() : null
         ];
     }
 
@@ -107,17 +110,17 @@ class CareerEditScreen extends Screen
             Layout::rows([
                 Group::make([
                     Input::make('career.payment')
-                    ->placeholder('salary')
-                    ->title('Salary'),
+                        ->placeholder('salary')
+                        ->title('Salary'),
                     Input::make('career.experience')
-                    ->title('Experience')
-                    ->placeholder('experience'),
+                        ->title('Experience')
+                        ->placeholder('experience'),
                     Input::make('career.days')
-                    ->title('Working days')
-                    ->placeholder('Days'),
+                        ->title('Working days')
+                        ->placeholder('Days'),
                     Input::make('career.hours')
-                    ->title('Working hours')
-                    ->placeholder('Hours'),
+                        ->title('Working hours')
+                        ->placeholder('Hours'),
                 ])
             ])->title('Working conditions'),
             Layout::rows([
@@ -152,15 +155,21 @@ class CareerEditScreen extends Screen
                     ->fields([
                         'point' => Input::make()
                     ])
-            ])->title('Perks & Benefits')
+            ])->title('Perks & Benefits'),
+            'SEO' => new SeoLayout()
         ];
     }
     public function createOrUpdate(Request $request)
     {
         $this->career->fill($request->get('career'))->save();
-
+        SeoData::updateOrCreate(
+            [
+                'page_type' => Career::class,
+                'page_id' => $this->career->id
+            ],
+            $request->input('seo', [])
+        );
         Toast::success('You have successfully created a job.');
-
         return redirect()->route('platform.job.list');
     }
 

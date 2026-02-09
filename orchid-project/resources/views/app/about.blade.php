@@ -118,66 +118,34 @@
 <div class="ca-brand-area pt-95 pb-160">
     <div class="swiper cs-brand-slider-active">
         <div class="swiper-wrapper slide-transtion">
+            @foreach($partners->partner as $item)
             <div class="swiper-slide">
                 <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo.png" alt="Zow" />
+                    <img src="{{ \Orchid\Attachment\Models\Attachment::find($item)->url }}" alt="Zow" />
                 </a>
             </div>
+            @endforeach
+            @foreach($partners->partner as $item)
             <div class="swiper-slide">
                 <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-2.png" alt="Zow" />
+                    <img src="{{ \Orchid\Attachment\Models\Attachment::find($item)->url }}" alt="Zow" />
                 </a>
             </div>
+            @endforeach
+            @foreach($partners->partner as $item)
             <div class="swiper-slide">
                 <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-3.png" alt="Zow" />
+                    <img src="{{ \Orchid\Attachment\Models\Attachment::find($item)->url }}" alt="Zow" />
                 </a>
             </div>
+            @endforeach
+            @foreach($partners->partner as $item)
             <div class="swiper-slide">
                 <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-4.png" alt="Zow" />
+                    <img src="{{ \Orchid\Attachment\Models\Attachment::find($item)->url }}" alt="Zow" />
                 </a>
             </div>
-            <div class="swiper-slide">
-                <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-5.png" alt="Zow" />
-                </a>
-            </div>
-            <div class="swiper-slide">
-                <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-6.png" alt="Zow" />
-                </a>
-            </div>
-            <div class="swiper-slide">
-                <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-7.png" alt="Zow" />
-                </a>
-            </div>
-            <div class="swiper-slide">
-                <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-2.png" alt="Zow" />
-                </a>
-            </div>
-            <div class="swiper-slide">
-                <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-3.png" alt="Zow" />
-                </a>
-            </div>
-            <div class="swiper-slide">
-                <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-4.png" alt="Zow" />
-                </a>
-            </div>
-            <div class="swiper-slide">
-                <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-5.png" alt="Zow" />
-                </a>
-            </div>
-            <div class="swiper-slide">
-                <a href="#" class="cs-brand-logo">
-                    <img src="assets/img/brand/cs/logo-6.png" alt="Zow" />
-                </a>
-            </div>
+            @endforeach
         </div>
     </div>
 </div>

@@ -4,7 +4,9 @@ namespace App\Orchid\Screens;
 
 use App\Models\Career;
 use App\Models\CareerBLock;
+use App\Models\SeoData;
 use App\Orchid\Layouts\CareerListLayout;
+use App\Orchid\Layouts\SeoLayout;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
@@ -26,7 +28,8 @@ class CareerListScreen extends Screen
         $careerBlock = CareerBLock::firstOrNew([]);
         return [
             'career' => Career::paginate(),
-            'career-block' => $careerBlock
+            'career-block' => $careerBlock,
+            'seo' => $careerBlock ? $careerBlock->getSeoData() : null
         ];
     }
 
@@ -70,12 +73,23 @@ class CareerListScreen extends Screen
                 ->title('Title career')
                 ->placeholder('Type career title')
             ])->title('Career title'),
-            CareerListLayout::class
+            CareerListLayout::class,
+            'SEO' => new SeoLayout()
         ];
     }
     function save(Request $request) {
         $careerBlock = CareerBLock::firstOrCreate([]);
         $careerBlock->fill($request->get('career-block'))->save();
+        // Seo
+        if ($careerBlock->seo) {
+            $careerBlock->seo->update($request->input('seo', []));
+        } else {
+            $seoData = array_merge(
+                ['page_type' => CareerBLock::class, 'page_id' => $careerBlock->id],
+                $request->input('seo', [])
+            );
+            SeoData::create($seoData);
+        }
         Toast::success('Title career saved');
         return redirect()->route('platform.job.list');
     }

@@ -10,6 +10,26 @@
         rel="shortcut icon"
         type="image/x-icon"
         href="{{ asset('favicon.png')}}" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @php
+    $currentSeo = $seoData ?? $seo ?? null;
+    @endphp
+    <meta name="description" content="{{ $currentSeo->meta_description ?? 'description default' }}">
+    <meta name="keywords" content="{{ $currentSeo->meta_keywords ?? 'keywords default' }}">
+    <meta name="author" content="TriangleVision - Digital content Agency!">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="@yield('title', 'TriangleVision - Digital content Agency!')">
+    <meta property="og:description" content="{{ $currentSeo->og_description ?? $currentSeo->meta_description ?? 'Og description' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/">
+    <meta property="og:image" content="{{ $currentSeo->og_image_url ?? asset('/images/default-preview.jpg') }}">
+    <meta property="og:site_name" content="TriangleVision - Digital content Agency!">
+    <meta property="og:locale" content="ru_RU">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'TriangleVision - Digital content Agency!')">
+    <meta name="twitter:description" content="{{ $currentSeo->og_description ?? $currentSeo->meta_description ?? 'Og description' }}">
+    <meta name="twitter:image" content="{{ $currentSeo->og_image_url ?? asset('/images/default-preview.jpg') }}">
+    <meta name="twitter:site" content="@yourusername">
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
     @vite(['resources/css/app.css','resources/css/bootstrap.min.css','resources/css/swiper-bundle.css','resources/css/nice-select.css','resources/css/magnific-popup.css','resources/css/font-awesome-pro.css','resources/css/spacing.css','resources/css/main.css'])
     @endif
@@ -89,6 +109,7 @@
     </div>
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
     @vite([
+    'resources/js/app.js',
     'resources/js/vendor/jquery.js',
     'resources/js/bootstrap.min.js',
     'resources/js/split-type.js',

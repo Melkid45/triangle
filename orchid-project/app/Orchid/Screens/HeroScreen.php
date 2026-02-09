@@ -5,8 +5,10 @@ namespace App\Orchid\Screens;
 use App\Models\Facts;
 use App\Models\Hero;
 use App\Models\Preview;
+use App\Models\SeoData;
 use App\Models\Ways;
 use App\Models\Works;
+use App\Orchid\Layouts\SeoLayout;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Group;
@@ -35,7 +37,8 @@ class HeroScreen extends Screen
             'hero' => $hero,
             'ways' => $ways,
             'facts' => $facts,
-            'preview' => $preview
+            'preview' => $preview,
+            'seo' => $hero ? $hero->getSeoData() : null
         ];
     }
 
@@ -140,7 +143,8 @@ class HeroScreen extends Screen
                         'title' => Input::make(),
                         'soft' => Input::make()->rows(5)
                     ])
-            ])->title('Facts block')
+            ])->title('Facts block'),
+            'SEO' => new SeoLayout(),
         ];
     }
     function save(Request $request)
@@ -164,6 +168,17 @@ class HeroScreen extends Screen
         $preview = Preview::firstOrCreate([]);
         $preview->fill($request->get('preview'));
         $preview->save();
+        // Seo
+
+        if ($hero->seo) {
+            $hero->seo->update($request->input('seo', []));
+        } else {
+            $seoData = array_merge(
+                ['page_type' => Hero::class, 'page_id' => $hero->id],
+                $request->input('seo', [])
+            );
+            SeoData::create($seoData);
+        }
         Toast::success('Home succesfuly save!');
         return redirect()->route('platform.hero');
     }
